@@ -9,6 +9,7 @@
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class IEnemyInterface;
 /**
  * 
  */
@@ -19,6 +20,7 @@ class AURA_API AAuraPlayerController : public APlayerController
 	
 public:
 	AAuraPlayerController();
+	virtual void PlayerTick(float DeltaTime) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -32,4 +34,9 @@ private:
 	TObjectPtr<UInputAction> MoveAction; // 输入行为：移动，在UE编辑器中加载，在C++中的增强输入组件中进行绑定
 
 	void Move(const FInputActionValue& InputActionValue); // 移动功能函数（参入参数是一个输入动作值类型的变量）
+
+	void CursorTrace(); // 光标跟踪函数
+	IEnemyInterface* LastActor; // 最后的Actor
+	IEnemyInterface* ThisActor; // 这个Actor
+	
 };

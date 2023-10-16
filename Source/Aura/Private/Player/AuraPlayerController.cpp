@@ -4,12 +4,78 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Interaction/EnemyInterface.h"
 
 
-AAuraPlayerController::AAuraPlayerController()
+AAuraPlayerController::AAuraPlayerController(): LastActor(nullptr), ThisActor(nullptr)
 {
 	bReplicates = true; // 该控制器可以通过网络进行复制
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTrace();
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit; // 光标碰撞的结果
+	// 获取鼠标碰撞结果（参数一是碰撞通道，可见性通道、参数二是跟踪复杂性为false简单跟踪、光标碰撞结果）
+	GetHitResultUnderCursor(ECC_Visibility,false,CursorHit);
+	if (!CursorHit.bBlockingHit)return; // 如果碰撞结果中没有有效的碰撞，返回
+	LastActor = ThisActor; // 首先最后的Actor等于当前这个Actor.最后的Actor存储当前这个Actor之前的身份
+	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor()); // 如果碰撞结果中所碰撞的Actor继承于IEnemyInterface，那么就可以进行转换，转换成功后可执行接口函数
+
+	/**
+	 * line trace form cursor. There are several scenarios: 追踪结果中有几种情况
+	 * A. LastActor is null && ThisActor is null  最后的Actor为空，并且当前这个Actor也为空，例如与鼠标接触的是墙壁、桌子等类似的Actor,不做任何事情
+	 *    - Do nothing
+	 * B. LastActor is null && ThisActor is valid 最后的Actor为空，且当前这个Actor有效，当前Actor突出显示
+	 *    - Highlight ThisActor
+	 * C. LastActor is valid && ThisActor is null 最后的Actor有效，并且当前的这个Actor无效，最后的Actor不突出显示
+	 *    - UnHighlight LastActor
+	 * D. Both actors are valid, but LastActor != ThisActor 最后的Actor与当前的Actor均有效，但是最后的Actor不是当前的Actor,最后的Actor不突出显示，当前这个Actor突出显示
+	 *    - UnHighLight LastActor, and HighLight ThisActor
+	 * E. Both actors are valid, and are the same actor 最后的Actor与当前的Actor均有效，都是同一种Actor,这意味着鼠标一直悬停在Actor上，因此不需做任何事情
+	 *    - Do nothing
+	 */
 	
+	if (LastActor == nullptr)
+	{
+		if (ThisActor != nullptr)
+		{
+			// Case B
+			ThisActor->HighLightActor();
+		}
+		else
+		{
+			// Case A - both are null, do nothing 
+		}
+	}
+	else // LastActor is valid
+	{
+		if (ThisActor == nullptr)
+		{
+			// Case C
+			LastActor->UnHighLightActor();
+		}
+		else // both actors are valid
+		{
+			if (LastActor != ThisActor)
+			{
+				// Case D
+				LastActor->UnHighLightActor();
+				ThisActor->HighLightActor();
+			}
+			else
+			{
+				// Case E - do nothing
+				
+			}
+		}
+	}
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -63,8 +129,9 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y); // 向右移动方向，也就是获取YawRotation的Y向单位长度轴
 
 	if (APawn* ControlledPawn = GetPawn<APawn>()) // 如果获取玩家控制的Pawn有效
-	{
+		{
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y); // 设置移动输入，对于前后移动针对的是Y分量
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X); // 设置移动输入，对于左右移动针对的是X分量
-	}
+		}
 }
+		
