@@ -23,5 +23,4 @@ public:
 	virtual void HighLightActor() override;
 	virtual void UnHighLightActor() override;
 	
-	
 };
