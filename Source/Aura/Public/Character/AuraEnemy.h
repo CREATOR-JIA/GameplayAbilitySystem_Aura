@@ -19,8 +19,12 @@ public:
 
 	AAuraEnemy();
 	
-	/** Highlight Interface 突出显示接口函数*/
-	virtual void HighLightActor() override;
-	virtual void UnHighLightActor() override;
+	/** Enemy Interface : 两个接口函数*/
+	virtual void HighLightActor() override; // 突出显示
+	virtual void UnHighLightActor() override; // 禁用突出显示
+	/** End Enemy Interface */
+
+protected:
 	
+	virtual void BeginPlay() override; // 重写BeginPlay()方法，在该方法中，我们初始化技能ActorInfo
 };

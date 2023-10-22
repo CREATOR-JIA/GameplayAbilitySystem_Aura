@@ -33,3 +33,14 @@ void AAuraEnemy::UnHighLightActor()
 	Weapon->SetRenderCustomDepth(false);
 }
 
+void AAuraEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+	/**
+	*初始化了Abilities的ActorInfo（参与者信息），该结构保存了有关我们正在对谁采取行动以及谁控制我们的信息。即OwnerActor和AvatarActor
+	*OwnerActor是逻辑上拥有此组件的参与者。
+	*AvatarActor是pawn。
+	*/
+	AbilitySystemComponent->InitAbilityActorInfo(this,this);
+}
+

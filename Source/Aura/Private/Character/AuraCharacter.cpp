@@ -2,9 +2,12 @@
 
 
 #include "Character/AuraCharacter.h"
+
+#include "AbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Player/AuraPlayerState.h"
 
 
 AAuraCharacter::AAuraCharacter()
@@ -28,4 +31,30 @@ AAuraCharacter::AAuraCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
+}
+
+void AAuraCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	// 完成ASC在服务端的初始化
+	InitAbilityActorInfo();
+}
+
+void AAuraCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	// 完成ASC在客户端的初始化
+	InitAbilityActorInfo();
+}
+
+void AAuraCharacter::InitAbilityActorInfo() // 初始化技能角色信息方法
+{
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>(); // 首先要获取到玩家状态PlayerState
+	check(AuraPlayerState); // 断言玩家状态是否有效，无效直接退出
+	// 如果玩家状态有效，通过玩家状态获取到技能系统组件，并调用组件中的初始化技能参与者信息方法进行初始化
+	AuraPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(AuraPlayerState,this);
+	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent(); // 通过玩家状态获取到技能系统组件
+	AttributeSet = AuraPlayerState->GetAttributeSet(); // 通过玩家状态获取到属性集
 }

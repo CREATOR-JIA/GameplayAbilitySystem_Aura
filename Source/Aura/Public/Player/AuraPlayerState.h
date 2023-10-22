@@ -22,7 +22,7 @@ public:
 	AAuraPlayerState();
 
 	// 获取两个指针，一个是能力系统组件，一个是属性集
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override; 
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override; // 该方法是重写了父类AbilitySystemInterface接口中的函数
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
 protected:
