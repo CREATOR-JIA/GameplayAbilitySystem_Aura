@@ -87,8 +87,8 @@ void AAuraPlayerController::BeginPlay()
 	check(AuraContext);
 
 	// 通过本地玩家来获取增强输入本地玩家子系统，向该系统内添加上下文映射
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	if (Subsystem) //如果增强输入本地玩家子系统有效，将AuraContext上下文映射到本地玩家子系统的上下文中（Priority:0为优先级，最优先即为0）
+	//如果增强输入本地玩家子系统有效，将AuraContext上下文映射到本地玩家子系统的上下文中（Priority:0为优先级，最优先即为0）
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())) 
 	{
 		Subsystem->AddMappingContext(AuraContext, 0);
 	}

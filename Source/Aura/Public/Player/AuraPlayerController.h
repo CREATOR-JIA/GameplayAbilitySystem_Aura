@@ -36,7 +36,7 @@ private:
 	void Move(const FInputActionValue& InputActionValue); // 移动功能函数（参入参数是一个输入动作值类型的变量）
 
 	void CursorTrace(); // 光标跟踪函数
-	IEnemyInterface* LastActor; // 最后的Actor
-	IEnemyInterface* ThisActor; // 这个Actor
+	TObjectPtr<IEnemyInterface> LastActor; // 最后的Actor
+	TObjectPtr<IEnemyInterface> ThisActor; // 这个Actor
 	
 };

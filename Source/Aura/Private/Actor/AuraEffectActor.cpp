@@ -38,6 +38,7 @@ void AAuraEffectActor::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 		// 由于AuraAttributeSet标记为const，因此属性集中的SetHealth设置健康值是不能用的。所以我们使用const_cast来对常量进行修改
 		UAuraAttributeSet* MutableAuraAttributeSet = const_cast<UAuraAttributeSet*>(AuraAttributeSet);
 		MutableAuraAttributeSet->SetHealth(AuraAttributeSet->GetHealth()+25.f);
+		MutableAuraAttributeSet->SetMana(AuraAttributeSet->GetMana()-25.f);
 		Destroy();
 	}
 	

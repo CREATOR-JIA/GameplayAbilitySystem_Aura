@@ -6,7 +6,7 @@
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
-	InitHealth(100.f); // 初始化健康值为100
+	InitHealth(50.f); // 初始化健康值为100
 	InitMaxHealth(100.f);
 	InitMana(50.f); // 初始化法术能量值
 	InitMaxMana(50.f);
